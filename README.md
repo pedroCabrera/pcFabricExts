@@ -27,7 +27,8 @@ Pedro Cabrera's extensions and presets for Fabric Engine
 
 ####Geometry/PolyIslands:
 - **PC_Polymesh_To_Islands**:   Takes a PolygonMesh as input and returns the Nb os islands, the island index per point array, the island center per point array, and the same for each island. it Also returns and array of PolygonMeshes, each one of the islands "ZeroPositioned".
-[FE Forums: PC_Polymesh_To_Islands](http://forums.fabricengine.com/discussion/64/pc-polymesh-to-islands#latest)
+  ¡¡especial thanks to [BigRoy](https://github.com/BigRoy) for the help with the recursive algorithm!!
+  [FE Forums: PC_Polymesh_To_Islands](http://forums.fabricengine.com/discussion/64/pc-polymesh-to-islands#latest)
 
 ##PC_HighLevelTools
 ####Lines/Defform:
