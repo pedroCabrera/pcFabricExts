@@ -1,0 +1,126 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "PC_Vec3_BezierCurve_Arrays",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "Positions",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3[][]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "t",
+      "execPortType" : "In",
+      "typeSpec" : "Float32[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "Output",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[][]"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "87FF37DA52D7D569EA81753F1D8C13BB",
+  "code" : "operator percurve<<<index>>>(Vec3[][] Positions,Float32[] t,io Vec3[][] Output){
+  Output[index].resize(t.size());
+  BezierPoint<<<t.size()>>>( Positions[index],t,Output[index]);
+}
+operator BezierPoint<<<index>>>(Vec3[] Positions,Float32[] t,io Vec3[] Output){
+  Vec3 pos[];
+  pos.resize(Positions.size()); 
+  Float32 factor = t[index];
+  for(Size i=0;i<Positions.size();i++){
+      pos[i] = Positions[i];
+  }  
+  for(Size e=0;e<Positions.size()-1;e++){
+    for(Size i=0;i<Positions.size();i++){
+      if(i!=Positions.size()-1){
+        pos[i] = pos[i].linearInterpolate(pos[i+1],factor);
+      }else{
+        pos[i] = pos[i].linearInterpolate(pos[i],factor);
+      }
+    }
+  }
+  Output[index] = pos[0];
+}
+dfgEntry {
+
+  Positions.resize(t.size());
+  percurve<<<Positions.size()>>>( Positions,t,Output);
+  //result = lhs + rhs;
+}
+",
+  "requiredPresets" : {
+    "PC_Tools.PC_BasicTools.Math.Curves.PC_Vec3_BezierCurve_Arrays" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "PC_Vec3_BezierCurve_Arrays",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "Positions",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3[][]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "t",
+          "execPortType" : "In",
+          "typeSpec" : "Float32[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "Output",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3[][]"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "87FF37DA52D7D569EA81753F1D8C13BB",
+      "code" : "operator percurve<<<index>>>(Vec3[][] Positions,Float32[] t,io Vec3[][] Output){
+  Output[index].resize(t.size());
+  BezierPoint<<<t.size()>>>( Positions[index],t,Output[index]);
+}
+operator BezierPoint<<<index>>>(Vec3[] Positions,Float32[] t,io Vec3[] Output){
+  Vec3 pos[];
+  pos.resize(Positions.size()); 
+  Float32 factor = t[index];
+  for(Size i=0;i<Positions.size();i++){
+      pos[i] = Positions[i];
+  }  
+  for(Size e=0;e<Positions.size()-1;e++){
+    for(Size i=0;i<Positions.size();i++){
+      if(i!=Positions.size()-1){
+        pos[i] = pos[i].linearInterpolate(pos[i+1],factor);
+      }else{
+        pos[i] = pos[i].linearInterpolate(pos[i],factor);
+      }
+    }
+  }
+  Output[index] = pos[0];
+}
+dfgEntry {
+
+  Positions.resize(t.size());
+  percurve<<<Positions.size()>>>( Positions,t,Output);
+  //result = lhs + rhs;
+}
+"
+      }
+    }
+  }

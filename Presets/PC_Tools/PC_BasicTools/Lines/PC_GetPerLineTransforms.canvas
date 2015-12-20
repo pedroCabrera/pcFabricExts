@@ -1,0 +1,454 @@
+{
+  "objectType" : "Graph",
+  "metadata" : {
+    "uiGraphZoom" : "{\n  \"value\" : 1.810711860656738\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 3357.84227433143,\n  \"y\" : -282.8188120638224\n  }"
+    },
+  "title" : "PC_GetPerLineTransforms",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "value",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Vec3" : {
+          "x" : 1,
+          "y" : 1,
+          "z" : 1
+          }
+        },
+      "name" : "upvector",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "elements",
+      "execPortType" : "Out",
+      "typeSpec" : "Xfo[][]"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "2F835D7418C81E66764CFF3DE2ECD7F2",
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1514.185913085938,\"y\":192.0073852539063}"
+        },
+      "name" : "GetPerPointTransforms_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1,
+              "y" : 1,
+              "z" : 1
+              }
+            },
+          "name" : "upvector"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Geometry.Lines.GetPerPointTransforms",
+      "presetGUID" : "85174A4965BAFBDA2BB2119B44820716"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1773.966552734375,\"y\":260.6898498535156}"
+        },
+      "name" : "GetIndicesPerCurve_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Geometry.Lines.GetIndicesPerCurve",
+      "presetGUID" : "AF2984675488C019D689A882C45DBB50"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1280.241821289063,\"y\":270.0318908691406}"
+        },
+      "name" : "GetArray_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "array"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "indices"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "elements"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "GetArray[]",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "array",
+            "execPortType" : "In",
+            "typeSpec" : "$TYPE$[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "indices",
+            "execPortType" : "In",
+            "typeSpec" : "Size[][]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "elements",
+            "execPortType" : "Out",
+            "typeSpec" : "$TYPE$[][]"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "dfgEntry {
+  elements.resize(indices.size());
+  for(Size i=0;i<indices.size();i++)
+  {
+    elements[i].resize(indices[i].size());
+    for(Size e=0;e<indices[i].size();e++){
+      if(indices[i][e] < array.size())
+        elements[i][e] = array[indices[i][e]];
+     }
+  }
+}
+"
+        }
+      }
+    ],
+  "connections" : {
+    "value" : [
+      "GetIndicesPerCurve_1.this"
+      ],
+    "upvector" : [
+      "GetPerPointTransforms_1.upvector"
+      ],
+    "GetPerPointTransforms_1.result" : [
+      "GetArray_1.array"
+      ],
+    "GetIndicesPerCurve_1.this" : [
+      "GetPerPointTransforms_1.this"
+      ],
+    "GetIndicesPerCurve_1.result" : [
+      "GetArray_1.indices"
+      ],
+    "GetArray_1.elements" : [
+      "elements"
+      ]
+    },
+  "requiredPresets" : {
+    "User.Lines.PC_GetPerLineTransforms" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiGraphZoom" : "{\n  \"value\" : 1.810711860656738\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 3357.84227433143,\n  \"y\" : -282.8188120638224\n  }"
+        },
+      "title" : "PC_GetPerLineTransforms",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "value",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1,
+              "y" : 1,
+              "z" : 1
+              }
+            },
+          "name" : "upvector",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "elements",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[][]"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "2F835D7418C81E66764CFF3DE2ECD7F2",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1514.185913085938,\"y\":192.0073852539063}"
+            },
+          "name" : "GetPerPointTransforms_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "defaultValues" : {
+                "Vec3" : {
+                  "x" : 1,
+                  "y" : 1,
+                  "z" : 1
+                  }
+                },
+              "name" : "upvector"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Geometry.Lines.GetPerPointTransforms",
+          "presetGUID" : "85174A4965BAFBDA2BB2119B44820716"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1773.966552734375,\"y\":260.6898498535156}"
+            },
+          "name" : "GetIndicesPerCurve_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Geometry.Lines.GetIndicesPerCurve",
+          "presetGUID" : "AF2984675488C019D689A882C45DBB50"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1280.241821289063,\"y\":270.0318908691406}"
+            },
+          "name" : "GetArray_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "array"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "indices"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "elements"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "GetArray[]",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "array",
+                "execPortType" : "In",
+                "typeSpec" : "$TYPE$[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "indices",
+                "execPortType" : "In",
+                "typeSpec" : "Size[][]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "elements",
+                "execPortType" : "Out",
+                "typeSpec" : "$TYPE$[][]"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "dfgEntry {
+  elements.resize(indices.size());
+  for(Size i=0;i<indices.size();i++)
+  {
+    elements[i].resize(indices[i].size());
+    for(Size e=0;e<indices[i].size();e++){
+      if(indices[i][e] < array.size())
+        elements[i][e] = array[indices[i][e]];
+     }
+  }
+}
+"
+            }
+          }
+        ],
+      "connections" : {
+        "value" : [
+          "GetIndicesPerCurve_1.this"
+          ],
+        "upvector" : [
+          "GetPerPointTransforms_1.upvector"
+          ],
+        "GetPerPointTransforms_1.result" : [
+          "GetArray_1.array"
+          ],
+        "GetIndicesPerCurve_1.this" : [
+          "GetPerPointTransforms_1.this"
+          ],
+        "GetIndicesPerCurve_1.result" : [
+          "GetArray_1.indices"
+          ],
+        "GetArray_1.elements" : [
+          "elements"
+          ]
+        }
+      },
+    "Fabric.Exts.Geometry.Lines.GetPerPointTransforms" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Geometry/Lines.html",
+        "uiTooltip" : "Returns an aligned transform for each control point of the curve\n\n Supported by Lines"
+        },
+      "title" : "GetPerPointTransforms",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Lines"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 1,
+              "z" : 0
+              }
+            },
+          "name" : "upvector",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "Xfo[]"
+          }
+        ],
+      "extDeps" : {
+        "Geometry" : "*"
+        },
+      "presetGUID" : "85174A4965BAFBDA2BB2119B44820716",
+      "code" : "require Geometry;
+
+dfgEntry {
+  result = this.getPerPointTransforms(upvector);
+}
+"
+      },
+    "Fabric.Exts.Geometry.Lines.GetIndicesPerCurve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Geometry/Lines.html",
+        "uiTooltip" : "Returns the indices for each curve as a separate array\n\n Supported by Lines"
+        },
+      "title" : "GetIndicesPerCurve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Lines"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "UInt32[][]"
+          }
+        ],
+      "extDeps" : {
+        "Geometry" : "*"
+        },
+      "presetGUID" : "AF2984675488C019D689A882C45DBB50",
+      "code" : "require Geometry;
+
+dfgEntry {
+  result = this.getIndicesPerCurve();
+}
+"
+      }
+    }
+  }

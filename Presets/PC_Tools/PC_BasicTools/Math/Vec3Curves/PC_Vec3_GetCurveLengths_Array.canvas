@@ -1,0 +1,160 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "PC_Vec3_GetCurveLengths_Array",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "PerLinePositions",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3[][]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : false
+        },
+      "name" : "Closed",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "PerPointLenght",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[][]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "LineLength",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[]"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "F0E1CFB99003DB0BB03724B04D43BC73",
+  "code" : "operator subtraction_task<<<index>>>(Vec3[] Array,Boolean Closed,io Scalar[] PerLinePointLenght){
+  Vec3 BackTangents[];
+  BackTangents.resize(Array.size());
+  if(index ==0){
+     if(Closed){ PerLinePointLenght[index] = Vec3(Array[Array.size()-1]-Array[Array.size()-2]).length();}
+     else{ PerLinePointLenght[index] = Vec3(Array[0]-Array[0]).length();}
+  }
+  else{ PerLinePointLenght[index] = Vec3(Array[index]-Array[index-1]).length(); }
+}
+
+operator percurve<<<index>>>(Vec3[][] Array,Boolean Closed,io Scalar[][] PerPointLenght,io Scalar[] LineLength){
+  if(Array.size()<1)return;
+  if(Array[0].size()<2)return;
+  
+  Scalar PerLinePointLenght[];
+  PerLinePointLenght.resize(Array[index].size());
+  PerPointLenght[index].resize(Array[index].size());
+  
+  subtraction_task<<<Array[index].size()>>>(Array[index],Closed,PerLinePointLenght);
+  LineLength[index] = 0;
+  PerPointLenght[index][0] = 0;
+  for(Size e=0;e<PerLinePointLenght.size();e++){
+    LineLength[index] += PerLinePointLenght[e];  
+    for(Size i=0;i<=e;i++){
+      PerPointLenght[index][e] += PerLinePointLenght[i];}
+  }
+}
+dfgEntry {
+  if(PerLinePositions.size()==0)return;
+  PerPointLenght.resize(PerLinePositions.size());
+  LineLength.resize(PerLinePositions.size());
+  
+  percurve<<<PerLinePositions.size()>>>(PerLinePositions,Closed,PerPointLenght,LineLength);
+  
+}
+",
+  "requiredPresets" : {
+    "PC_Tools.PC_BasicTools.Math.Vec3Curves.PC_Vec3_GetCurveLengths_Array" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "PC_Vec3_GetCurveLengths_Array",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "PerLinePositions",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3[][]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "name" : "Closed",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "PerPointLenght",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar[][]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "LineLength",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar[]"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "F0E1CFB99003DB0BB03724B04D43BC73",
+      "code" : "operator subtraction_task<<<index>>>(Vec3[] Array,Boolean Closed,io Scalar[] PerLinePointLenght){
+  Vec3 BackTangents[];
+  BackTangents.resize(Array.size());
+  if(index ==0){
+     if(Closed){ PerLinePointLenght[index] = Vec3(Array[Array.size()-1]-Array[Array.size()-2]).length();}
+     else{ PerLinePointLenght[index] = Vec3(Array[0]-Array[0]).length();}
+  }
+  else{ PerLinePointLenght[index] = Vec3(Array[index]-Array[index-1]).length(); }
+}
+
+operator percurve<<<index>>>(Vec3[][] Array,Boolean Closed,io Scalar[][] PerPointLenght,io Scalar[] LineLength){
+  if(Array.size()<1)return;
+  if(Array[0].size()<2)return;
+  
+  Scalar PerLinePointLenght[];
+  PerLinePointLenght.resize(Array[index].size());
+  PerPointLenght[index].resize(Array[index].size());
+  
+  subtraction_task<<<Array[index].size()>>>(Array[index],Closed,PerLinePointLenght);
+  LineLength[index] = 0;
+  PerPointLenght[index][0] = 0;
+  for(Size e=0;e<PerLinePointLenght.size();e++){
+    LineLength[index] += PerLinePointLenght[e];  
+    for(Size i=0;i<=e;i++){
+      PerPointLenght[index][e] += PerLinePointLenght[i];}
+  }
+}
+dfgEntry {
+  if(PerLinePositions.size()==0)return;
+  PerPointLenght.resize(PerLinePositions.size());
+  LineLength.resize(PerLinePositions.size());
+  
+  percurve<<<PerLinePositions.size()>>>(PerLinePositions,Closed,PerPointLenght,LineLength);
+  
+}
+"
+      }
+    }
+  }

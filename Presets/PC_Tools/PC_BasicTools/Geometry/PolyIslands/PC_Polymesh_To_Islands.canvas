@@ -1,0 +1,1118 @@
+{
+  "objectType" : "Graph",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 0,\n  \"g\" : 0,\n  \"b\" : 0\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 75,\n  \"g\" : 54,\n  \"b\" : 86\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.9240748286247253\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 2284.364990234375,\n  \"y\" : -1055.91748046875\n  }"
+    },
+  "title" : "PC_Polymesh_To_Islands",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "result",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "NbIslands",
+      "execPortType" : "Out",
+      "typeSpec" : "UInt32"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "PerPointIslandIndex",
+      "execPortType" : "Out",
+      "typeSpec" : "UInt32[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "PerPointIslandCenter",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "PerIslandPointIndex",
+      "execPortType" : "Out",
+      "typeSpec" : "UInt32[][]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "IslandsCenters",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "ZERO_Centered_Islands",
+      "execPortType" : "Out"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "EE25CE4FB8F40AA8663F986FFA920BD5",
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1852.5869140625,\"y\":1227.85498046875}"
+        },
+      "name" : "PC_PolymeshToIslands",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "NbIslands"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "PerPointIslandIndex"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "PerPointIslandCenter"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "IslandPointIndex"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "IslandCenters"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "Islands"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "title" : "PC_PolymeshToIslands",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "this",
+            "execPortType" : "In",
+            "typeSpec" : "PolygonMesh"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "NbIslands",
+            "execPortType" : "Out",
+            "typeSpec" : "UInt32"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "PerPointIslandIndex",
+            "execPortType" : "Out",
+            "typeSpec" : "UInt32[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "PerPointIslandCenter",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "IslandPointIndex",
+            "execPortType" : "Out",
+            "typeSpec" : "UInt32[][]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "IslandCenters",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3[]"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "In",
+            "name" : "Islands",
+            "execPortType" : "Out",
+            "typeSpec" : "PolygonMesh[]"
+            }
+          ],
+        "extDeps" : {},
+        "code" : "// Frabric Canvas node to find PolygonMesh Islands
+// Author: Pedro Cabrera
+// Especial thankns to Roy Nieterau for the implementation on the recursive algorithm
+
+require Math;
+
+operator computeFinalIslandData<<<index>>>(PolygonMesh this,UInt32[][] IslandPointIndex,io Vec3[] IslandCenters,io PolygonMesh[] islands){
+  Vec3 center; 
+  IndexSet polys;
+  PolygonMesh p();
+  // Init each island Geometry Structure
+  p.beginStructureChanges();
+  p.createPoints(this.pointCount());
+  p.getOrCreateNormals();
+
+  // Get each island point and sum them
+  for ( UInt32 i = 0; i < IslandPointIndex[index].size(); ++i ) {
+    Vec3 pos = this.getPointPosition(IslandPointIndex[index][i]);
+    p.setPointPosition(IslandPointIndex[index][i],pos);
+    center += pos;
+    // Get all island Polygons and store them in an index set to avoid duplicates
+    LocalL8UInt32Array polygons;
+    this.getPointPolygons(IslandPointIndex[index][i], polygons);
+    for ( UInt32 e = 0; e < polygons.size(); ++e ){
+      polys.add(polygons.get(e));
+    }
+  }
+  // Get sum average = Center
+  IslandCenters[index] = center/IslandPointIndex[index].size();
+  // Create the new island Polygons
+  for ( UInt32 e = 0; e < polys.size(); ++e ){
+    LocalL8UInt32Array points;
+    this.getPolygonPoints(polys.getIndices()[e],points);
+    p.addPolygon(points);
+    // Restore Normals
+    for ( UInt32 po = 0; po < points.size(); ++po ){
+      p.setPolygonPointNormal(e,po,this.getPolygonPointNormal(polys.getIndices()[e],po)); 
+    }    
+  }
+  //Clear final Geometry
+  p.incrementPointPositionsVersion();
+  p.incrementNormalsVersion();
+  p.deleteUnusedPoints();
+  p.endStructureChanges();
+
+  //Center the island to 0,0,0
+  centerislandpoint<<<p.pointCount()>>>(p,IslandCenters[index]);
+  islands[index] = p;
+}
+operator centerislandpoint<<<index>>>(io PolygonMesh this,Vec3 center){
+  this.setPointPosition(index,this.getPointPosition(index)-center);
+}
+operator islandPerPoint<<<index>>>(Vec3[] IslandCenters,UInt32[] PerPointIslandIndex,io Vec3[] PerPointIslandCenter){
+  PerPointIslandCenter[index] = IslandCenters[PerPointIslandIndex[index]];
+}
+
+dfgEntry {
+
+  Size size = this.pointCount();
+
+  // Set all vertices as not visited
+  Boolean visited[];
+  visited.resize(size);
+  for(Size i=0; i<size; i++) visited[i] = false;
+
+  PerPointIslandIndex.resize(size);
+  IslandPointIndex.resize(0); // clear per island point indices
+  UInt32 counter = 0; // counter for \"current\" island index
+
+  for (UInt32 pt=0; pt<size; pt++) {
+    // Only search if a point wasn't visited yet (as such is a new island)
+    if (!visited[pt]) {
+      // Start depth-first search from this vertex (stack)
+      Size stack[];
+      stack.push(pt);
+      visited[pt] = true;
+      
+      UInt32 points[]; // point indices for current island
+      
+      // Iterate our search stack
+      while(stack.size() > 0) {
+        Size currentPt = stack.pop();
+        
+        PerPointIslandIndex[currentPt] = counter; // Set points' index to current island
+        points.push(currentPt); // Add to this island's points
+        
+        LocalL16UInt32Array surroundingPoints;
+        this.getPointSurroundingPoints(currentPt, false, surroundingPoints);
+        UInt32 nbNei = surroundingPoints.size(); // Number of neighbours
+        if( nbNei ) {
+          for( UInt32 i = 0; i < nbNei; ++i ) {
+            UInt32 neiPt = surroundingPoints.get(i);
+            // Only visit if neighbour wasn't visited yet 
+            if(!visited[neiPt]){
+              // Add to search
+              visited[neiPt] = true;
+              stack.push(neiPt);
+            }  
+          }
+        } 
+      }
+      IslandPointIndex.push(points);
+      counter++;
+    }    
+  }
+  NbIslands = counter;
+  PerPointIslandCenter.resize(size);
+  IslandCenters.resize(counter);
+  Islands.resize(counter);
+  // Calculate Centers and New Island Geometry
+  computeFinalIslandData<<<counter>>>(this, IslandPointIndex, IslandCenters, Islands);
+  // Fill the IslandCenter per Point array
+  islandPerPoint<<<size>>>(IslandCenters, PerPointIslandIndex, PerPointIslandCenter);
+}"
+        }
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1568.990600585938,\"y\":1424.617065429688}"
+        },
+      "name" : "Cache_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-2006.215698242188,\"y\":1240.1474609375}"
+        },
+      "name" : "Cache_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1569.18701171875,\"y\":1220.494262695313}"
+        },
+      "name" : "Cache_4",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1569.365600585938,\"y\":1272.400390625}"
+        },
+      "name" : "Cache_5",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1569.516967773438,\"y\":1323.401977539063}"
+        },
+      "name" : "Cache_6",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1569.441162109375,\"y\":1375.260498046875}"
+        },
+      "name" : "Cache_7",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-2228.522705078125,\"y\":1219.422119140625}"
+        },
+      "name" : "ClonePolygonMesh_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Geometry.PolygonMesh.ClonePolygonMesh",
+      "presetGUID" : "8480EBBD95E54A412E1471D01B474BA2"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1569.533813476563,\"y\":1165.400756835938}"
+        },
+      "name" : "Cache_3",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "value"
+          }
+        ],
+      "executable" : "Fabric.Core.Data.Cache",
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+      }
+    ],
+  "connections" : {
+    "result" : [
+      "ClonePolygonMesh_1.value"
+      ],
+    "PC_PolymeshToIslands.NbIslands" : [
+      "Cache_3.value"
+      ],
+    "PC_PolymeshToIslands.PerPointIslandIndex" : [
+      "Cache_4.value"
+      ],
+    "PC_PolymeshToIslands.PerPointIslandCenter" : [
+      "Cache_5.value"
+      ],
+    "PC_PolymeshToIslands.IslandPointIndex" : [
+      "Cache_6.value"
+      ],
+    "PC_PolymeshToIslands.IslandCenters" : [
+      "Cache_7.value"
+      ],
+    "PC_PolymeshToIslands.Islands" : [
+      "Cache_1.value"
+      ],
+    "Cache_1.value" : [
+      "ZERO_Centered_Islands"
+      ],
+    "Cache_2.value" : [
+      "PC_PolymeshToIslands.this"
+      ],
+    "Cache_4.value" : [
+      "PerPointIslandIndex"
+      ],
+    "Cache_5.value" : [
+      "PerPointIslandCenter"
+      ],
+    "Cache_6.value" : [
+      "PerIslandPointIndex"
+      ],
+    "Cache_7.value" : [
+      "IslandsCenters"
+      ],
+    "ClonePolygonMesh_1.result" : [
+      "Cache_2.value"
+      ],
+    "Cache_3.value" : [
+      "NbIslands"
+      ]
+    },
+  "requiredPresets" : {
+    "PC_Tools.PC_BasicTools.Geometry.PolyIslands.PC_Polymesh_To_Islands" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 0,\n  \"g\" : 0,\n  \"b\" : 0\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 75,\n  \"g\" : 54,\n  \"b\" : 86\n  }",
+        "uiGraphZoom" : "{\n  \"value\" : 0.9240748286247253\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 2284.364990234375,\n  \"y\" : -1055.91748046875\n  }"
+        },
+      "title" : "PC_Polymesh_To_Islands",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "result",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "NbIslands",
+          "execPortType" : "Out",
+          "typeSpec" : "UInt32"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "PerPointIslandIndex",
+          "execPortType" : "Out",
+          "typeSpec" : "UInt32[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "PerPointIslandCenter",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "PerIslandPointIndex",
+          "execPortType" : "Out",
+          "typeSpec" : "UInt32[][]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "IslandsCenters",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "ZERO_Centered_Islands",
+          "execPortType" : "Out"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "EE25CE4FB8F40AA8663F986FFA920BD5",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1852.5869140625,\"y\":1227.85498046875}"
+            },
+          "name" : "PC_PolymeshToIslands",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "NbIslands"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "PerPointIslandIndex"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "PerPointIslandCenter"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "IslandPointIndex"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "IslandCenters"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "Islands"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "title" : "PC_PolymeshToIslands",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "this",
+                "execPortType" : "In",
+                "typeSpec" : "PolygonMesh"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "NbIslands",
+                "execPortType" : "Out",
+                "typeSpec" : "UInt32"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "PerPointIslandIndex",
+                "execPortType" : "Out",
+                "typeSpec" : "UInt32[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "PerPointIslandCenter",
+                "execPortType" : "Out",
+                "typeSpec" : "Vec3[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "IslandPointIndex",
+                "execPortType" : "Out",
+                "typeSpec" : "UInt32[][]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "IslandCenters",
+                "execPortType" : "Out",
+                "typeSpec" : "Vec3[]"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "In",
+                "name" : "Islands",
+                "execPortType" : "Out",
+                "typeSpec" : "PolygonMesh[]"
+                }
+              ],
+            "extDeps" : {},
+            "code" : "// Frabric Canvas node to find PolygonMesh Islands
+// Author: Pedro Cabrera
+// Especial thankns to Roy Nieterau for the implementation on the recursive algorithm
+
+require Math;
+
+operator computeFinalIslandData<<<index>>>(PolygonMesh this,UInt32[][] IslandPointIndex,io Vec3[] IslandCenters,io PolygonMesh[] islands){
+  Vec3 center; 
+  IndexSet polys;
+  PolygonMesh p();
+  // Init each island Geometry Structure
+  p.beginStructureChanges();
+  p.createPoints(this.pointCount());
+  p.getOrCreateNormals();
+
+  // Get each island point and sum them
+  for ( UInt32 i = 0; i < IslandPointIndex[index].size(); ++i ) {
+    Vec3 pos = this.getPointPosition(IslandPointIndex[index][i]);
+    p.setPointPosition(IslandPointIndex[index][i],pos);
+    center += pos;
+    // Get all island Polygons and store them in an index set to avoid duplicates
+    LocalL8UInt32Array polygons;
+    this.getPointPolygons(IslandPointIndex[index][i], polygons);
+    for ( UInt32 e = 0; e < polygons.size(); ++e ){
+      polys.add(polygons.get(e));
+    }
+  }
+  // Get sum average = Center
+  IslandCenters[index] = center/IslandPointIndex[index].size();
+  // Create the new island Polygons
+  for ( UInt32 e = 0; e < polys.size(); ++e ){
+    LocalL8UInt32Array points;
+    this.getPolygonPoints(polys.getIndices()[e],points);
+    p.addPolygon(points);
+    // Restore Normals
+    for ( UInt32 po = 0; po < points.size(); ++po ){
+      p.setPolygonPointNormal(e,po,this.getPolygonPointNormal(polys.getIndices()[e],po)); 
+    }    
+  }
+  //Clear final Geometry
+  p.incrementPointPositionsVersion();
+  p.incrementNormalsVersion();
+  p.deleteUnusedPoints();
+  p.endStructureChanges();
+
+  //Center the island to 0,0,0
+  centerislandpoint<<<p.pointCount()>>>(p,IslandCenters[index]);
+  islands[index] = p;
+}
+operator centerislandpoint<<<index>>>(io PolygonMesh this,Vec3 center){
+  this.setPointPosition(index,this.getPointPosition(index)-center);
+}
+operator islandPerPoint<<<index>>>(Vec3[] IslandCenters,UInt32[] PerPointIslandIndex,io Vec3[] PerPointIslandCenter){
+  PerPointIslandCenter[index] = IslandCenters[PerPointIslandIndex[index]];
+}
+
+dfgEntry {
+
+  Size size = this.pointCount();
+
+  // Set all vertices as not visited
+  Boolean visited[];
+  visited.resize(size);
+  for(Size i=0; i<size; i++) visited[i] = false;
+
+  PerPointIslandIndex.resize(size);
+  IslandPointIndex.resize(0); // clear per island point indices
+  UInt32 counter = 0; // counter for \"current\" island index
+
+  for (UInt32 pt=0; pt<size; pt++) {
+    // Only search if a point wasn't visited yet (as such is a new island)
+    if (!visited[pt]) {
+      // Start depth-first search from this vertex (stack)
+      Size stack[];
+      stack.push(pt);
+      visited[pt] = true;
+      
+      UInt32 points[]; // point indices for current island
+      
+      // Iterate our search stack
+      while(stack.size() > 0) {
+        Size currentPt = stack.pop();
+        
+        PerPointIslandIndex[currentPt] = counter; // Set points' index to current island
+        points.push(currentPt); // Add to this island's points
+        
+        LocalL16UInt32Array surroundingPoints;
+        this.getPointSurroundingPoints(currentPt, false, surroundingPoints);
+        UInt32 nbNei = surroundingPoints.size(); // Number of neighbours
+        if( nbNei ) {
+          for( UInt32 i = 0; i < nbNei; ++i ) {
+            UInt32 neiPt = surroundingPoints.get(i);
+            // Only visit if neighbour wasn't visited yet 
+            if(!visited[neiPt]){
+              // Add to search
+              visited[neiPt] = true;
+              stack.push(neiPt);
+            }  
+          }
+        } 
+      }
+      IslandPointIndex.push(points);
+      counter++;
+    }    
+  }
+  NbIslands = counter;
+  PerPointIslandCenter.resize(size);
+  IslandCenters.resize(counter);
+  Islands.resize(counter);
+  // Calculate Centers and New Island Geometry
+  computeFinalIslandData<<<counter>>>(this, IslandPointIndex, IslandCenters, Islands);
+  // Fill the IslandCenter per Point array
+  islandPerPoint<<<size>>>(IslandCenters, PerPointIslandIndex, PerPointIslandCenter);
+}"
+            }
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1568.990600585938,\"y\":1424.617065429688}"
+            },
+          "name" : "Cache_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "executable" : "Fabric.Core.Data.Cache",
+          "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-2006.215698242188,\"y\":1240.1474609375}"
+            },
+          "name" : "Cache_2",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "executable" : "Fabric.Core.Data.Cache",
+          "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1569.18701171875,\"y\":1220.494262695313}"
+            },
+          "name" : "Cache_4",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "executable" : "Fabric.Core.Data.Cache",
+          "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1569.365600585938,\"y\":1272.400390625}"
+            },
+          "name" : "Cache_5",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "executable" : "Fabric.Core.Data.Cache",
+          "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1569.516967773438,\"y\":1323.401977539063}"
+            },
+          "name" : "Cache_6",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "executable" : "Fabric.Core.Data.Cache",
+          "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1569.441162109375,\"y\":1375.260498046875}"
+            },
+          "name" : "Cache_7",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "executable" : "Fabric.Core.Data.Cache",
+          "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-2228.522705078125,\"y\":1219.422119140625}"
+            },
+          "name" : "ClonePolygonMesh_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Geometry.PolygonMesh.ClonePolygonMesh",
+          "presetGUID" : "8480EBBD95E54A412E1471D01B474BA2"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1569.533813476563,\"y\":1165.400756835938}"
+            },
+          "name" : "Cache_3",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              }
+            ],
+          "executable" : "Fabric.Core.Data.Cache",
+          "presetGUID" : "D903AFD981FE9214C69943F542D5FD60"
+          }
+        ],
+      "connections" : {
+        "result" : [
+          "ClonePolygonMesh_1.value"
+          ],
+        "PC_PolymeshToIslands.NbIslands" : [
+          "Cache_3.value"
+          ],
+        "PC_PolymeshToIslands.PerPointIslandIndex" : [
+          "Cache_4.value"
+          ],
+        "PC_PolymeshToIslands.PerPointIslandCenter" : [
+          "Cache_5.value"
+          ],
+        "PC_PolymeshToIslands.IslandPointIndex" : [
+          "Cache_6.value"
+          ],
+        "PC_PolymeshToIslands.IslandCenters" : [
+          "Cache_7.value"
+          ],
+        "PC_PolymeshToIslands.Islands" : [
+          "Cache_1.value"
+          ],
+        "Cache_1.value" : [
+          "ZERO_Centered_Islands"
+          ],
+        "Cache_2.value" : [
+          "PC_PolymeshToIslands.this"
+          ],
+        "Cache_4.value" : [
+          "PerPointIslandIndex"
+          ],
+        "Cache_5.value" : [
+          "PerPointIslandCenter"
+          ],
+        "Cache_6.value" : [
+          "PerIslandPointIndex"
+          ],
+        "Cache_7.value" : [
+          "IslandsCenters"
+          ],
+        "ClonePolygonMesh_1.result" : [
+          "Cache_2.value"
+          ],
+        "Cache_3.value" : [
+          "NbIslands"
+          ]
+        }
+      },
+    "Fabric.Core.Data.Cache" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 214,\n  \"g\" : 191,\n  \"b\" : 103\n  }",
+        "uiAlwaysShowDaisyChainPorts" : "true",
+        "uiHeaderColor" : "{\n  \"r\" : 188,\n  \"g\" : 129,\n  \"b\" : 83\n  }"
+        },
+      "title" : "Cache",
+      "cacheRule" : "always",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "D903AFD981FE9214C69943F542D5FD60",
+      "code" : "dfgEntry {
+}
+"
+      },
+    "Fabric.Exts.Geometry.PolygonMesh.ClonePolygonMesh" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 214,\n  \"g\" : 191,\n  \"b\" : 103\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 188,\n  \"g\" : 129,\n  \"b\" : 83\n  }"
+        },
+      "title" : "ClonePolygonMesh",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "value",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "PolygonMesh"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "8480EBBD95E54A412E1471D01B474BA2",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 329, \"y\": 165}"
+            },
+          "name" : "PolygonMesh",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "debugName"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "float64Positions"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Geometry.PolygonMesh.PolygonMesh",
+          "presetGUID" : "18F3A38BE7497D6BFC18A148A520B66D"
+          },
+        {
+          "objectType" : "Var",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 476, \"y\": 176}"
+            },
+          "name" : "mesh",
+          "ports" : [
+            {
+              "objectType" : "VarPort",
+              "nodePortType" : "IO",
+              "name" : "value"
+              }
+            ],
+          "dataType" : "PolygonMesh",
+          "extDep" : "Geometry:*"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\": 674, \"y\": 115}"
+            },
+          "name" : "CloneMembersTo",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "value"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "IO",
+              "name" : "clonedValue"
+              }
+            ],
+          "executable" : "Fabric.Core.Data.CloneMembersTo",
+          "presetGUID" : "5FCEF4F5EFB2D8F917E415A22FFCDF2C"
+          }
+        ],
+      "connections" : {
+        "value" : [
+          "CloneMembersTo.value"
+          ],
+        "PolygonMesh.result" : [
+          "mesh.value"
+          ],
+        "mesh.value" : [
+          "CloneMembersTo.clonedValue"
+          ],
+        "CloneMembersTo.clonedValue" : [
+          "result"
+          ]
+        }
+      },
+    "Fabric.Exts.Geometry.PolygonMesh.PolygonMesh" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Geometry/PolygonMesh.html",
+        "uiTooltip" : "Constructor.\n\n Supported by PolygonMesh"
+        },
+      "title" : "PolygonMesh",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "debugName",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "float64Positions",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+            },
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "PolygonMesh"
+          }
+        ],
+      "extDeps" : {
+        "Geometry" : "*"
+        },
+      "presetGUID" : "18F3A38BE7497D6BFC18A148A520B66D",
+      "code" : "require Geometry;
+
+dfgEntry {
+  result = PolygonMesh(debugName, float64Positions);
+}
+"
+      },
+    "Fabric.Core.Data.CloneMembersTo" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiNodeColor" : "{\n  \"r\" : 214,\n  \"g\" : 191,\n  \"b\" : 103\n  }",
+        "uiHeaderColor" : "{\n  \"r\" : 188,\n  \"g\" : 129,\n  \"b\" : 83\n  }"
+        },
+      "title" : "CloneMembersTo",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "value",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "IO",
+          "name" : "clonedValue",
+          "execPortType" : "IO",
+          "typeSpec" : "$TYPE$"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "5FCEF4F5EFB2D8F917E415A22FFCDF2C",
+      "code" : "dfgEntry {
+  value.cloneMembersTo(clonedValue);
+}
+"
+      }
+    }
+  }

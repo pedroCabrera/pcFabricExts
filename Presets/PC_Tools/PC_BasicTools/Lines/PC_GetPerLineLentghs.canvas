@@ -1,0 +1,508 @@
+{
+  "objectType" : "Graph",
+  "metadata" : {
+    "uiGraphZoom" : "{\n  \"value\" : 1.879999995231628\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 3017.01953125,\n  \"y\" : -1093.173583984375\n  }"
+    },
+  "title" : "PC_GetPerLineLentghs",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "value",
+      "execPortType" : "In"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : false
+        },
+      "name" : "Closed",
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "In",
+      "name" : "PerLinePointLengths",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[][]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "LineLength",
+      "execPortType" : "Out",
+      "typeSpec" : "Scalar[]"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "F48597763850E18A26811BC256250C82",
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1529.093017578125,\"y\":607.6621704101563}"
+        },
+      "name" : "GetPerLinePositions_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "User.Lines.GetPerLinePositions",
+      "presetGUID" : "6797B88338DC3B09C3D358CC9485F370"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-1312.244506835938,\"y\":611.261474609375}"
+        },
+      "name" : "PC_Vec3_GetCurveLengths_Array_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "PerLinePositions"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "Closed"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "PerPointLenght"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "LineLength"
+          }
+        ],
+      "executable" : "PC_Tools.PC_BasicTools.Math.Vec3Curves.PC_Vec3_GetCurveLengths_Array",
+      "presetGUID" : "F0E1CFB99003DB0BB03724B04D43BC73"
+      }
+    ],
+  "connections" : {
+    "value" : [
+      "GetPerLinePositions_2.this"
+      ],
+    "Closed" : [
+      "PC_Vec3_GetCurveLengths_Array_1.Closed"
+      ],
+    "GetPerLinePositions_2.result" : [
+      "PC_Vec3_GetCurveLengths_Array_1.PerLinePositions"
+      ],
+    "PC_Vec3_GetCurveLengths_Array_1.PerPointLenght" : [
+      "PerLinePointLengths"
+      ],
+    "PC_Vec3_GetCurveLengths_Array_1.LineLength" : [
+      "LineLength"
+      ]
+    },
+  "requiredPresets" : {
+    "PC_Tools.PC_BasicTools.Lines.PC_GetPerLineLentghs" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiGraphZoom" : "{\n  \"value\" : 1.879999995231628\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 3017.01953125,\n  \"y\" : -1093.173583984375\n  }"
+        },
+      "title" : "PC_GetPerLineLentghs",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "value",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {},
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "name" : "Closed",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "metadata" : {},
+          "nodePortType" : "In",
+          "name" : "PerLinePointLengths",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar[][]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "LineLength",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar[]"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "F48597763850E18A26811BC256250C82",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1529.093017578125,\"y\":607.6621704101563}"
+            },
+          "name" : "GetPerLinePositions_2",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "User.Lines.GetPerLinePositions",
+          "presetGUID" : "6797B88338DC3B09C3D358CC9485F370"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-1312.244506835938,\"y\":611.261474609375}"
+            },
+          "name" : "PC_Vec3_GetCurveLengths_Array_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "PerLinePositions"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "Closed"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "PerPointLenght"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "LineLength"
+              }
+            ],
+          "executable" : "PC_Tools.PC_BasicTools.Math.Vec3Curves.PC_Vec3_GetCurveLengths_Array",
+          "presetGUID" : "F0E1CFB99003DB0BB03724B04D43BC73"
+          }
+        ],
+      "connections" : {
+        "value" : [
+          "GetPerLinePositions_2.this"
+          ],
+        "Closed" : [
+          "PC_Vec3_GetCurveLengths_Array_1.Closed"
+          ],
+        "GetPerLinePositions_2.result" : [
+          "PC_Vec3_GetCurveLengths_Array_1.PerLinePositions"
+          ],
+        "PC_Vec3_GetCurveLengths_Array_1.PerPointLenght" : [
+          "PerLinePointLengths"
+          ],
+        "PC_Vec3_GetCurveLengths_Array_1.LineLength" : [
+          "LineLength"
+          ]
+        }
+      },
+    "User.Lines.GetPerLinePositions" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiGraphZoom" : "{\n  \"value\" : 2.825166940689087\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 4779.395629882813,\n  \"y\" : -1093.7294921875\n  }"
+        },
+      "title" : "GetPerLinePositions",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "6797B88338DC3B09C3D358CC9485F370",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-2230.5439453125,\"y\":585.0208129882813}"
+            },
+          "name" : "GetIndicesPerCurve1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Geometry.Lines.GetIndicesPerCurve",
+          "presetGUID" : "AF2984675488C019D689A882C45DBB50"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-2020.851684570313,\"y\":586.2086791992188}"
+            },
+          "name" : "GetPerCurvePosition",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "point"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "metadata" : {
+              "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+              "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+              "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.0-auto-2015110900/HTML/KLExtensionsGuide/Geometry/Points.html",
+              "uiTooltip" : "Returns the position of a point.\n\n Supported by Points,Lines"
+              },
+            "title" : "GetPosition[]",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "this",
+                "execPortType" : "In",
+                "typeSpec" : "$TYPE$"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "defaultValues" : {
+                  "Size[]" : [
+                    0
+                    ]
+                  },
+                "name" : "point",
+                "execPortType" : "In",
+                "typeSpec" : "Size[][]"
+                },
+              {
+                "objectType" : "Port",
+                "metadata" : {
+                  "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+                  },
+                "nodePortType" : "In",
+                "name" : "result",
+                "execPortType" : "Out",
+                "typeSpec" : "Vec3[][]"
+                }
+              ],
+            "extDeps" : {
+              "Geometry" : "*"
+              },
+            "origPresetGUID" : "C332AA390E83311793FAB897A9F7C87B",
+            "code" : "require Geometry;
+
+operator Geometry_Points_getPosition_task<<<index>>>(
+  io Vec3[][] result
+, in $TYPE$ this
+, in Size[][] point
+) {
+  result[index].resize(point[index].size());
+  Geometry_getPosition_task<<<point[index].size()>>>(result[index], this, point[index]);
+}
+operator Geometry_getPosition_task<<<index>>>(
+  io Vec3[] result
+, in $TYPE$ this
+, in Size[] point
+) {
+  result[index] = this.getPosition(point[index < point.size() ? index : point.size() - 1]);
+}
+dfgEntry {
+  if( point.size() == 0) return;
+  Size task_size = point.size();
+  result.resize(task_size);
+  if(task_size < 10000 /* pex margin */) {
+    for(Size index = 0; index < task_size; index++) {
+      Geometry_Points_getPosition_task(index, result, this, point);
+    }
+  } else {
+    Geometry_Points_getPosition_task<<<task_size>>>(result, this, point);
+  }
+}
+"
+            }
+          }
+        ],
+      "connections" : {
+        "this" : [
+          "GetIndicesPerCurve1.this"
+          ],
+        "GetIndicesPerCurve1.this" : [
+          "GetPerCurvePosition.this"
+          ],
+        "GetIndicesPerCurve1.result" : [
+          "GetPerCurvePosition.point"
+          ],
+        "GetPerCurvePosition.result" : [
+          "result"
+          ]
+        }
+      },
+    "Fabric.Exts.Geometry.Lines.GetIndicesPerCurve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Geometry/Lines.html",
+        "uiTooltip" : "Returns the indices for each curve as a separate array\n\n Supported by Lines"
+        },
+      "title" : "GetIndicesPerCurve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Lines"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "UInt32[][]"
+          }
+        ],
+      "extDeps" : {
+        "Geometry" : "*"
+        },
+      "presetGUID" : "AF2984675488C019D689A882C45DBB50",
+      "code" : "require Geometry;
+
+dfgEntry {
+  result = this.getIndicesPerCurve();
+}
+"
+      },
+    "PC_Tools.PC_BasicTools.Math.Vec3Curves.PC_Vec3_GetCurveLengths_Array" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "PC_Vec3_GetCurveLengths_Array",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "PerLinePositions",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3[][]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "name" : "Closed",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "PerPointLenght",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar[][]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "LineLength",
+          "execPortType" : "Out",
+          "typeSpec" : "Scalar[]"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "F0E1CFB99003DB0BB03724B04D43BC73",
+      "code" : "operator subtraction_task<<<index>>>(Vec3[] Array,Boolean Closed,io Scalar[] PerLinePointLenght){
+  Vec3 BackTangents[];
+  BackTangents.resize(Array.size());
+  if(index ==0){
+     if(Closed){ PerLinePointLenght[index] = Vec3(Array[Array.size()-1]-Array[Array.size()-2]).length();}
+     else{ PerLinePointLenght[index] = Vec3(Array[0]-Array[0]).length();}
+  }
+  else{ PerLinePointLenght[index] = Vec3(Array[index]-Array[index-1]).length(); }
+}
+
+operator percurve<<<index>>>(Vec3[][] Array,Boolean Closed,io Scalar[][] PerPointLenght,io Scalar[] LineLength){
+  if(Array.size()<1)return;
+  if(Array[0].size()<2)return;
+  
+  Scalar PerLinePointLenght[];
+  PerLinePointLenght.resize(Array[index].size());
+  PerPointLenght[index].resize(Array[index].size());
+  
+  subtraction_task<<<Array[index].size()>>>(Array[index],Closed,PerLinePointLenght);
+  LineLength[index] = 0;
+  PerPointLenght[index][0] = 0;
+  for(Size e=0;e<PerLinePointLenght.size();e++){
+    LineLength[index] += PerLinePointLenght[e];  
+    for(Size i=0;i<=e;i++){
+      PerPointLenght[index][e] += PerLinePointLenght[i];}
+  }
+}
+dfgEntry {
+  if(PerLinePositions.size()==0)return;
+  PerPointLenght.resize(PerLinePositions.size());
+  LineLength.resize(PerLinePositions.size());
+  
+  percurve<<<PerLinePositions.size()>>>(PerLinePositions,Closed,PerPointLenght,LineLength);
+  
+}
+"
+      }
+    }
+  }

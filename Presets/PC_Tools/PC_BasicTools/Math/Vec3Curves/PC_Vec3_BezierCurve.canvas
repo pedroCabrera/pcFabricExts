@@ -1,0 +1,110 @@
+{
+  "objectType" : "Func",
+  "title" : "PC_Vec3_BezierCurve",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "Positions",
+      "execPortType" : "In",
+      "typeSpec" : "Vec3[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "t",
+      "execPortType" : "In",
+      "typeSpec" : "Float32[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "Output",
+      "execPortType" : "Out",
+      "typeSpec" : "Vec3[]"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "73B9E8D0CEC79082F20320E96DF916E6",
+  "code" : "operator BezierPoint<<<index>>>(Vec3[] Positions,Float32[] t,io Vec3[] Output){
+  Vec3 pos[];
+  pos.resize(Positions.size()); 
+  Float32 factor = t[index];
+  for(Size i=0;i<Positions.size();i++){
+      pos[i] = Positions[i];
+  }  
+  for(Size e=0;e<Positions.size()-1;e++){
+    for(Size i=0;i<Positions.size();i++){
+      if(i!=Positions.size()-1){
+        pos[i] = pos[i].linearInterpolate(pos[i+1],factor);
+      }else{
+        pos[i] = pos[i].linearInterpolate(pos[i],factor);
+      }
+    }
+  }
+  Output[index] = pos[0];
+}
+dfgEntry {
+
+  Output.resize(t.size());
+  BezierPoint<<<t.size()>>>( Positions,t,Output);
+  //result = lhs + rhs;
+}
+",
+  "requiredPresets" : {
+    "PC_Tools.PC_BasicTools.Math.Curves.PC_Vec3_BezierCurve" : {
+      "objectType" : "Func",
+      "title" : "PC_Vec3_BezierCurve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "Positions",
+          "execPortType" : "In",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "t",
+          "execPortType" : "In",
+          "typeSpec" : "Float32[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "Output",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3[]"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "73B9E8D0CEC79082F20320E96DF916E6",
+      "code" : "operator BezierPoint<<<index>>>(Vec3[] Positions,Float32[] t,io Vec3[] Output){
+  Vec3 pos[];
+  pos.resize(Positions.size()); 
+  Float32 factor = t[index];
+  for(Size i=0;i<Positions.size();i++){
+      pos[i] = Positions[i];
+  }  
+  for(Size e=0;e<Positions.size()-1;e++){
+    for(Size i=0;i<Positions.size();i++){
+      if(i!=Positions.size()-1){
+        pos[i] = pos[i].linearInterpolate(pos[i+1],factor);
+      }else{
+        pos[i] = pos[i].linearInterpolate(pos[i],factor);
+      }
+    }
+  }
+  Output[index] = pos[0];
+}
+dfgEntry {
+
+  Output.resize(t.size());
+  BezierPoint<<<t.size()>>>( Positions,t,Output);
+  //result = lhs + rhs;
+}
+"
+      }
+    }
+  }

@@ -1,0 +1,361 @@
+{
+  "objectType" : "Graph",
+  "metadata" : {
+    "uiGraphZoom" : "{\n  \"value\" : 2.501038551330566\n  }",
+    "uiGraphPan" : "{\n  \"x\" : 856.6535186767578,\n  \"y\" : -500.90283203125\n  }"
+    },
+  "title" : "PC_GetPerLinePositions",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "metadata" : {},
+      "nodePortType" : "Out",
+      "name" : "this",
+      "execPortType" : "In",
+      "typeSpec" : "Lines"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "result",
+      "execPortType" : "Out"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "6FFBA744DB99E312A33EE429D7C40A3E",
+  "nodes" : [
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-296.1092224121094,\"y\":299.8686828613281}"
+        },
+      "name" : "GetIndicesPerCurve_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "executable" : "Fabric.Exts.Geometry.Lines.GetIndicesPerCurve",
+      "presetGUID" : "AF2984675488C019D689A882C45DBB50"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":-32.54429626464844,\"y\":296.951416015625}"
+        },
+      "name" : "GetPerCurvePosition",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "this"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "In",
+          "name" : "point"
+          },
+        {
+          "objectType" : "InstPort",
+          "nodePortType" : "Out",
+          "name" : "result"
+          }
+        ],
+      "definition" : {
+        "objectType" : "Func",
+        "metadata" : {
+          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+          "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.0-auto-2015110900/HTML/KLExtensionsGuide/Geometry/Points.html",
+          "uiTooltip" : "Returns the position of a point.\n\n Supported by Points,Lines"
+          },
+        "title" : "GetPosition[]",
+        "ports" : [
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "name" : "this",
+            "execPortType" : "In",
+            "typeSpec" : "$TYPE$"
+            },
+          {
+            "objectType" : "Port",
+            "nodePortType" : "Out",
+            "defaultValues" : {
+              "Size[]" : [
+                0
+                ]
+              },
+            "name" : "point",
+            "execPortType" : "In",
+            "typeSpec" : "Size[][]"
+            },
+          {
+            "objectType" : "Port",
+            "metadata" : {
+              "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+              },
+            "nodePortType" : "In",
+            "name" : "result",
+            "execPortType" : "Out",
+            "typeSpec" : "Vec3[][]"
+            }
+          ],
+        "extDeps" : {
+          "Geometry" : "*"
+          },
+        "code" : "require Geometry;
+
+operator Geometry_Points_getPosition_task<<<index>>>(
+  io Vec3[][] result
+, in $TYPE$ this
+, in Size[][] point
+) {
+  result[index].resize(point[index].size());
+  Geometry_getPosition_task<<<point[index].size()>>>(result[index], this, point[index]);
+}
+operator Geometry_getPosition_task<<<index>>>(
+  io Vec3[] result
+, in $TYPE$ this
+, in Size[] point
+) {
+  result[index] = this.getPosition(point[index < point.size() ? index : point.size() - 1]);
+}
+dfgEntry {
+  if( point.size() == 0) return;
+  Size task_size = point.size();
+  result.resize(task_size);
+  if(task_size < 10000 /* pex margin */) {
+    for(Size index = 0; index < task_size; index++) {
+      Geometry_Points_getPosition_task(index, result, this, point);
+    }
+  } else {
+    Geometry_Points_getPosition_task<<<task_size>>>(result, this, point);
+  }
+}
+"
+        }
+      }
+    ],
+  "connections" : {
+    "this" : [
+      "GetIndicesPerCurve_1.this"
+      ],
+    "GetIndicesPerCurve_1.this" : [
+      "GetPerCurvePosition.this"
+      ],
+    "GetIndicesPerCurve_1.result" : [
+      "GetPerCurvePosition.point"
+      ],
+    "GetPerCurvePosition.result" : [
+      "result"
+      ]
+    },
+  "requiredPresets" : {
+    "PC_Tools.PC_BasicTools.Lines.PC_GetPerLinePositions" : {
+      "objectType" : "Graph",
+      "metadata" : {
+        "uiGraphZoom" : "{\n  \"value\" : 2.501038551330566\n  }",
+        "uiGraphPan" : "{\n  \"x\" : 856.6535186767578,\n  \"y\" : -500.90283203125\n  }"
+        },
+      "title" : "PC_GetPerLinePositions",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {},
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Lines"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "6FFBA744DB99E312A33EE429D7C40A3E",
+      "nodes" : [
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-296.1092224121094,\"y\":299.8686828613281}"
+            },
+          "name" : "GetIndicesPerCurve_1",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "executable" : "Fabric.Exts.Geometry.Lines.GetIndicesPerCurve",
+          "presetGUID" : "AF2984675488C019D689A882C45DBB50"
+          },
+        {
+          "objectType" : "Inst",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":-32.54429626464844,\"y\":296.951416015625}"
+            },
+          "name" : "GetPerCurvePosition",
+          "ports" : [
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "this"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "In",
+              "name" : "point"
+              },
+            {
+              "objectType" : "InstPort",
+              "nodePortType" : "Out",
+              "name" : "result"
+              }
+            ],
+          "definition" : {
+            "objectType" : "Func",
+            "metadata" : {
+              "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+              "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+              "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.0-auto-2015110900/HTML/KLExtensionsGuide/Geometry/Points.html",
+              "uiTooltip" : "Returns the position of a point.\n\n Supported by Points,Lines"
+              },
+            "title" : "GetPosition[]",
+            "ports" : [
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "name" : "this",
+                "execPortType" : "In",
+                "typeSpec" : "$TYPE$"
+                },
+              {
+                "objectType" : "Port",
+                "nodePortType" : "Out",
+                "defaultValues" : {
+                  "Size[]" : [
+                    0
+                    ]
+                  },
+                "name" : "point",
+                "execPortType" : "In",
+                "typeSpec" : "Size[][]"
+                },
+              {
+                "objectType" : "Port",
+                "metadata" : {
+                  "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+                  },
+                "nodePortType" : "In",
+                "name" : "result",
+                "execPortType" : "Out",
+                "typeSpec" : "Vec3[][]"
+                }
+              ],
+            "extDeps" : {
+              "Geometry" : "*"
+              },
+            "code" : "require Geometry;
+
+operator Geometry_Points_getPosition_task<<<index>>>(
+  io Vec3[][] result
+, in $TYPE$ this
+, in Size[][] point
+) {
+  result[index].resize(point[index].size());
+  Geometry_getPosition_task<<<point[index].size()>>>(result[index], this, point[index]);
+}
+operator Geometry_getPosition_task<<<index>>>(
+  io Vec3[] result
+, in $TYPE$ this
+, in Size[] point
+) {
+  result[index] = this.getPosition(point[index < point.size() ? index : point.size() - 1]);
+}
+dfgEntry {
+  if( point.size() == 0) return;
+  Size task_size = point.size();
+  result.resize(task_size);
+  if(task_size < 10000 /* pex margin */) {
+    for(Size index = 0; index < task_size; index++) {
+      Geometry_Points_getPosition_task(index, result, this, point);
+    }
+  } else {
+    Geometry_Points_getPosition_task<<<task_size>>>(result, this, point);
+  }
+}
+"
+            }
+          }
+        ],
+      "connections" : {
+        "this" : [
+          "GetIndicesPerCurve_1.this"
+          ],
+        "GetIndicesPerCurve_1.this" : [
+          "GetPerCurvePosition.this"
+          ],
+        "GetIndicesPerCurve_1.result" : [
+          "GetPerCurvePosition.point"
+          ],
+        "GetPerCurvePosition.result" : [
+          "result"
+          ]
+        }
+      },
+    "Fabric.Exts.Geometry.Lines.GetIndicesPerCurve" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.0.1/HTML/KLExtensionsGuide/Geometry/Lines.html",
+        "uiTooltip" : "Returns the indices for each curve as a separate array\n\n Supported by Lines"
+        },
+      "title" : "GetIndicesPerCurve",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+            },
+          "nodePortType" : "Out",
+          "name" : "this",
+          "execPortType" : "In",
+          "typeSpec" : "Lines"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "result",
+          "execPortType" : "Out",
+          "typeSpec" : "UInt32[][]"
+          }
+        ],
+      "extDeps" : {
+        "Geometry" : "*"
+        },
+      "presetGUID" : "AF2984675488C019D689A882C45DBB50",
+      "code" : "require Geometry;
+
+dfgEntry {
+  result = this.getIndicesPerCurve();
+}
+"
+      }
+    }
+  }

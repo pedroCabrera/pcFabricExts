@@ -1,0 +1,86 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "PC_PerLineDataToStrip",
+  "ports" : [
+    {
+      "objectType" : "Port",
+      "nodePortType" : "Out",
+      "name" : "CvData",
+      "execPortType" : "In",
+      "typeSpec" : "$TYPE$[][]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "Strip",
+      "execPortType" : "Out",
+      "typeSpec" : "$TYPE$[]"
+      },
+    {
+      "objectType" : "Port",
+      "nodePortType" : "In",
+      "name" : "Counts",
+      "execPortType" : "Out",
+      "typeSpec" : "Size[]"
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "5AE9F13AF7BFF68370E0C4E0B9E9DDF6",
+  "code" : "dfgEntry {
+  for(Size i=0;i<CvData.size();i++){
+    Counts.push(CvData[i].size());
+    for(Size e=0;e<CvData[i].size();e++){
+      Strip.push(CvData[i][e]);
+    }
+  }
+}
+",
+  "requiredPresets" : {
+    "PC_Tools.PC_BasicTools.Lines.PC_PerLineDataToStrip" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "PC_PerLineDataToStrip",
+      "ports" : [
+        {
+          "objectType" : "Port",
+          "nodePortType" : "Out",
+          "name" : "CvData",
+          "execPortType" : "In",
+          "typeSpec" : "$TYPE$[][]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "Strip",
+          "execPortType" : "Out",
+          "typeSpec" : "$TYPE$[]"
+          },
+        {
+          "objectType" : "Port",
+          "nodePortType" : "In",
+          "name" : "Counts",
+          "execPortType" : "Out",
+          "typeSpec" : "Size[]"
+          }
+        ],
+      "extDeps" : {},
+      "presetGUID" : "5AE9F13AF7BFF68370E0C4E0B9E9DDF6",
+      "code" : "dfgEntry {
+  for(Size i=0;i<CvData.size();i++){
+    Counts.push(CvData[i].size());
+    for(Size e=0;e<CvData[i].size();e++){
+      Strip.push(CvData[i][e]);
+    }
+  }
+}
+"
+      }
+    }
+  }
